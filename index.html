@@ -19,10 +19,13 @@
   @font-face { font-family: 'Lettera Text'; font-weight: 500; src: local('Lettera Text Medium'), local('LetteraText-Medium'), local('Lettera Text Trial Medium'), local('LetteraTextTrial-Medium'); }
   @font-face { font-family: 'Lettera Text'; font-weight: 400; src: local('Lettera Text Regular'), local('LetteraText-Regular'), local('Lettera Text Trial Regular'), local('LetteraTextTrial-Regular'); }
 
-  /* Two colours only.
-     --red   : the White Rabbit red, for backgrounds, the rabbit and big headlines.
-     --ink   : the same red, one step deeper, for small text, lines and buttons on white
-               (keeps small text readable: 5:1 on white). */
+  /* Form font: Gen Interface JP by Yamato Iizuka, SIL Open Font License 1.1 (free to host).
+     Trimmed to Latin characters so it loads fast. Upload the fonts/ folder next to index.html. */
+  @font-face { font-family: 'Gen Interface JP'; font-weight: 400; font-display: swap; src: url('fonts/GenInterfaceJP-Regular.woff') format('woff'); }
+  @font-face { font-family: 'Gen Interface JP'; font-weight: 500; font-display: swap; src: url('fonts/GenInterfaceJP-Medium.woff') format('woff'); }
+
+  /* Two colours: White Rabbit red and white. --ink is the same red one shade deeper,
+     used only for text sitting on white (the button), so it stays readable. */
   :root { --red: #FF080C; --ink: #E00509; --white: #FFFFFF; --ease: cubic-bezier(.2,.7,.2,1); }
   * { box-sizing: border-box; }
   html, body { margin: 0; }
@@ -36,6 +39,7 @@
     font-family: 'Lettera Text', 'Inter', system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
   }
+  ::selection { background: var(--white); color: var(--ink); }
   main {
     flex: 1;
     display: flex;
@@ -47,7 +51,7 @@
     text-align: center;
   }
 
-  /* ---------- Landing (red) ---------- */
+  /* ---------- Landing ---------- */
   .rabbit {
     width: clamp(88px, 14vw, 140px);
     display: block;
@@ -56,7 +60,7 @@
     padding: 0;
     color: inherit;
     cursor: default;
-    transition: width 500ms var(--ease), color 500ms var(--ease);
+    transition: width 500ms var(--ease);
     animation: arrive 900ms var(--ease) both;
   }
   .rabbit svg { width: 100%; height: auto; display: block; }
@@ -74,102 +78,122 @@
   }
   .follow:hover, .follow:focus-visible { border-bottom-color: currentColor; outline: none; }
 
-  /* ---------- Invite (stays red: white fields, white buttons, red ink inside) ---------- */
+  /* ---------- Invite: one question at a time ---------- */
+  .invite, .done { display: none; }
   body.open .follow { display: none; }
-  body.open main { justify-content: flex-start; gap: 36px; padding-top: 64px; }
-  body.open .rabbit { width: 56px; cursor: pointer; }
-  .invite, .done { display: none; width: 100%; max-width: 560px; text-align: left; }
-  body.open .invite { display: block; animation: arrive 600ms 120ms var(--ease) both; }
+  body.open main { justify-content: flex-start; padding-top: 48px; gap: 0; }
+  body.open .rabbit { width: 40px; cursor: pointer; }
+  body.open .invite {
+    display: block;
+    width: 100%;
+    max-width: 680px;
+    margin: auto 0;               /* centres the question in the space left */
+    padding: 48px 0;
+    text-align: left;
+    font-family: 'Gen Interface JP', 'Inter', system-ui, sans-serif;
+  }
 
-  .invite h1 {
-    margin: 0 0 12px;
+  .progress { display: flex; gap: 6px; margin-bottom: 40px; }
+  .progress span {
+    width: 10px; height: 10px;
+    border: 1.5px solid var(--white);
+    transition: background 300ms var(--ease);
+  }
+  .progress span.on { background: var(--white); }
+
+  .step { display: none; flex-direction: column; gap: 32px; border: 0; margin: 0; padding: 0; min-width: 0; }
+  .step.active { display: flex; animation: stepIn 450ms var(--ease) both; }
+  .step.back-in { animation-name: stepBack; }
+
+  .kicker { margin: 0 0 -16px; font-size: 18px; font-weight: 500; }
+  .q {
+    margin: 0;
+    padding: 0;
     font-weight: 500;
-    font-size: clamp(32px, 5vw, 48px);
-    letter-spacing: -0.02em;
-    line-height: 1.05;
+    font-size: clamp(34px, 5.4vw, 56px);
+    letter-spacing: -0.025em;
+    line-height: 1.06;
   }
-  .invite .lede { margin: 0 0 32px; font-size: 22px; font-weight: 500; line-height: 1.35; }
-  form { display: flex; flex-direction: column; gap: 12px; }
 
-  /* Fields: white blocks, red label and text inside */
-  .field {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    background: var(--white);
-    padding: 12px 16px 8px;
-    box-shadow: inset 0 -3px 0 transparent;
-    transition: box-shadow 150ms ease;
-  }
-  .field:focus-within { box-shadow: inset 0 -3px 0 var(--ink); }
-  .field label {
-    font-size: 12px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--ink);
-  }
-  .field input {
-    border: 0;
-    border-radius: 0;
+  .answer {
+    width: 100%;
     background: transparent;
-    color: var(--ink);
-    font: inherit;
-    font-size: 20px;
-    padding: 4px 0 6px;
-    outline: none;
-  }
-  .field input::placeholder { color: var(--ink); opacity: .5; }
-  .optional { text-transform: none; letter-spacing: 0; opacity: .75; }
-
-  /* Choice: white outlines, the picked one fills white */
-  .roles { border: 0; margin: 12px 0 4px; padding: 0; }
-  .roles legend { padding: 0; margin-bottom: 10px; font-size: 18px; font-weight: 500; }
-  .role-options { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
-  .role-options input { position: absolute; opacity: 0; pointer-events: none; }
-  .role-options label {
-    display: flex; align-items: center; justify-content: center;
-    min-height: 52px; padding: 8px 6px;
-    border: 2px solid var(--white);
+    border: 0;
+    border-bottom: 2px solid rgba(255, 255, 255, .45);
+    border-radius: 0;
     color: var(--white);
-    font-size: 17px; font-weight: 500; text-align: center; white-space: nowrap;
-    cursor: pointer;
-    transition: background 150ms ease, color 150ms ease;
+    caret-color: var(--white);
+    font: inherit;
+    font-size: clamp(24px, 3.4vw, 34px);
+    padding: 6px 0 14px;
+    outline: none;
+    transition: border-color 200ms ease;
   }
-  .role-options label:hover { background: rgba(255, 255, 255, .12); }
-  .role-options input:checked + label { background: var(--white); color: var(--ink); }
-  .role-options input:focus-visible + label { outline: 3px solid var(--white); outline-offset: 3px; }
+  .answer:focus { border-bottom-color: var(--white); }
+  .answer::placeholder { color: var(--white); opacity: .45; }
+  .answer:-webkit-autofill { -webkit-text-fill-color: var(--white); transition: background-color 9999s; }
 
+  .choices { display: flex; flex-direction: column; gap: 4px; }
+  .choice {
+    display: flex; align-items: center; gap: 20px;
+    width: 100%;
+    background: none; border: 0; padding: 10px 0;
+    color: var(--white);
+    font: inherit;
+    font-size: clamp(28px, 4.2vw, 44px);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    text-align: left;
+    cursor: pointer;
+    opacity: .7;
+    transition: opacity 200ms ease;
+  }
+  .choice .box {
+    flex: none;
+    width: 0.4em; height: 0.4em;
+    border: 2px solid var(--white);
+    transition: background 200ms ease;
+  }
+  .choice:hover, .choice:focus-visible, .choice[aria-checked="true"] { opacity: 1; outline: none; }
+  .choice[aria-checked="true"] .box { background: var(--white); }
+  .choice:focus-visible .box { outline: 2px solid var(--white); outline-offset: 4px; }
+
+  .row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; }
+  .next {
+    display: inline-flex; align-items: center; gap: 10px;
+    min-height: 52px;
+    padding: 12px 24px;
+    background: var(--white);
+    color: var(--ink);
+    border: 0;
+    font: inherit;
+    font-size: 18px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: transform 150ms var(--ease);
+  }
+  .next .arrow { transition: transform 200ms var(--ease); }
+  .next:hover .arrow { transform: translateX(4px); }
+  .next:active { transform: scale(.98); }
+  .next:focus-visible { outline: 3px solid var(--white); outline-offset: 3px; }
+  .next:disabled { opacity: .7; cursor: wait; }
+  .hint { font-size: 16px; font-weight: 500; opacity: .85; }
+  .skip, .back {
+    background: none; border: 0; padding: 12px 0;
+    color: var(--white);
+    font: inherit; font-size: 18px; font-weight: 500;
+    cursor: pointer;
+    text-decoration: underline; text-underline-offset: 5px; text-decoration-thickness: 1.5px;
+  }
+  .back { margin-top: 40px; text-decoration: none; opacity: .85; }
+  .back:hover { opacity: 1; }
+  .msg { min-height: 1.4em; margin: -16px 0 0; font-size: 18px; font-weight: 500; }
+  .step.shake { animation: shake 360ms ease; }
   .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
 
-  .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; margin-top: 20px; }
-  button[type="submit"] {
-    display: inline-flex; align-items: center; gap: 12px;
-    min-height: 56px;
-    padding: 14px 28px;
-    background: var(--white);
-    color: var(--ink);
-    border: 2px solid var(--white);
-    font: inherit;
-    font-size: 19px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background 150ms ease, color 150ms ease;
-  }
-  button[type="submit"] .arrow { transition: transform 200ms var(--ease); }
-  button[type="submit"]:hover { background: transparent; color: var(--white); }
-  button[type="submit"]:hover .arrow { transform: translateX(4px); }
-  button[type="submit"]:focus-visible { outline: 3px solid var(--white); outline-offset: 3px; }
-  button[type="submit"]:disabled { opacity: .7; cursor: wait; }
-  .back {
-    background: none; border: 0; padding: 12px 0;
-    font: inherit; font-size: 18px; font-weight: 500; color: var(--white);
-    cursor: pointer; text-decoration: underline; text-underline-offset: 5px;
-  }
-  .error { min-height: 1.4em; margin: 0; font-size: 18px; font-weight: 500; }
-
-  /* ---------- Sent (back to red) ---------- */
+  /* ---------- Sent ---------- */
   body.sent .invite, body.sent .follow { display: none; }
-  body.sent main { justify-content: center; }
+  body.sent main { justify-content: center; gap: 40px; padding-top: 96px; }
   body.sent .rabbit { width: clamp(88px, 14vw, 140px); cursor: default; }
   body.sent .done { display: block; text-align: center; animation: arrive 600ms 120ms var(--ease) both; }
   .done h2 { margin: 0 0 12px; font-weight: 500; font-size: clamp(36px, 6vw, 64px); letter-spacing: -0.02em; }
@@ -187,21 +211,22 @@
   footer a:hover, footer a:focus-visible { opacity: 1; }
   footer svg { width: 22px; height: 22px; display: block; }
 
-  @keyframes arrive {
-    from { opacity: 0; transform: translateY(12px); }
-    to   { opacity: 1; transform: none; }
-  }
+  @keyframes arrive   { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+  @keyframes stepIn   { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
+  @keyframes stepBack { from { opacity: 0; transform: translateY(-24px); } to { opacity: 1; transform: none; } }
+  @keyframes shake    { 25% { transform: translateX(-6px); } 50% { transform: translateX(5px); } 75% { transform: translateX(-3px); } }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition: none !important; }
   }
   @media (max-width: 480px) {
-    .role-options { grid-template-columns: 1fr; }
+    body.open .invite { padding-top: 24px; }
+    .hint { display: none; }
   }
 </style>
 </head>
 <body>
 <main>
-  <button class="rabbit" type="button" aria-label="Back" tabindex="-1">
+  <button class="rabbit" type="button" aria-label="Back to start" tabindex="-1">
     <svg viewBox="94 57 98 175" aria-hidden="true">
       <g fill="currentColor">
         <rect x="96.5" y="59" width="33" height="33"/>
@@ -215,54 +240,62 @@
 
   <a class="follow" href="#invite">Follow the white rabbit.</a>
 
-  <section class="invite" id="invite" aria-labelledby="invite-title">
-    <h1 id="invite-title">Come bend the internet with us.</h1>
-    <p class="lede">White Rabbit is invite only. Tell us who you are.</p>
+  <section class="invite" id="invite" aria-label="Request an invite">
+    <div class="progress" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
 
     <form id="invite-form" novalidate>
       <!-- Paste your Web3Forms access key here (free, from web3forms.com). Submissions go to your email. -->
       <input type="hidden" name="access_key" value="YOUR_WEB3FORMS_KEY">
       <input type="hidden" name="subject" value="New White Rabbit invite request">
       <input type="hidden" name="from_name" value="White Rabbit">
+      <input type="hidden" name="role" id="role">
       <!-- Spam trap: people never see this, bots fill it in -->
       <div class="hp" aria-hidden="true"><input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off"></div>
 
-      <div class="field">
-        <label for="name">Name</label>
-        <input id="name" name="name" type="text" autocomplete="name" required>
-      </div>
-      <div class="field">
-        <label for="email">Email</label>
-        <input id="email" name="email" type="email" autocomplete="email" required>
+      <div class="step" role="group" data-step="name">
+        <p class="kicker">Come bend the internet with us.</p>
+        <h2 class="q"><label for="name">First, what’s your name?</label></h2>
+        <input class="answer" id="name" name="name" type="text" autocomplete="name" placeholder="Your name" required>
+        <p class="msg" aria-live="polite"></p>
+        <div class="row"><button type="submit" class="next">OK <span class="arrow" aria-hidden="true">→</span></button><span class="hint">or press Enter ↵</span></div>
       </div>
 
-      <fieldset class="roles">
-        <legend>I’m a</legend>
-        <div class="role-options">
-          <input type="radio" id="r-builder" name="role" value="Builder" required>
-          <label for="r-builder">Builder</label>
-          <input type="radio" id="r-partner" name="role" value="Partner">
-          <label for="r-partner">Partner</label>
-          <input type="radio" id="r-team" name="role" value="Future teammate">
-          <label for="r-team">Future teammate</label>
+      <div class="step" role="group" data-step="email">
+        <h2 class="q"><label for="email" id="email-q">Where can we find you?</label></h2>
+        <input class="answer" id="email" name="email" type="email" autocomplete="email" inputmode="email" placeholder="you@example.com" required>
+        <p class="msg" aria-live="polite"></p>
+        <div class="row"><button type="submit" class="next">OK <span class="arrow" aria-hidden="true">→</span></button><span class="hint">or press Enter ↵</span></div>
+      </div>
+
+      <div class="step" role="group" data-step="role">
+        <h2 class="q">Which one are you?</h2>
+        <div class="choices" role="radiogroup" aria-label="Which one are you?">
+          <button type="button" class="choice" role="radio" aria-checked="false" data-value="Builder"><span class="box" aria-hidden="true"></span>A builder</button>
+          <button type="button" class="choice" role="radio" aria-checked="false" data-value="Partner"><span class="box" aria-hidden="true"></span>A partner</button>
+          <button type="button" class="choice" role="radio" aria-checked="false" data-value="Future teammate"><span class="box" aria-hidden="true"></span>A future teammate</button>
         </div>
-      </fieldset>
-
-      <div class="field">
-        <label for="bend">What would you bend?</label>
-        <input id="bend" name="what_would_you_bend" type="text" maxlength="200" required>
-      </div>
-      <div class="field">
-        <label for="link">A link to you <span class="optional">(optional)</span></label>
-        <input id="link" name="link" type="url" placeholder="X, LinkedIn or portfolio" autocomplete="url">
+        <p class="msg" aria-live="polite"></p>
       </div>
 
-      <div class="actions">
-        <button type="submit"><span class="label">Request an invite</span><span class="arrow" aria-hidden="true">→</span></button>
-        <button type="button" class="back">Back</button>
+      <div class="step" role="group" data-step="bend">
+        <h2 class="q"><label for="bend">What would you bend?</label></h2>
+        <input class="answer" id="bend" name="what_would_you_bend" type="text" maxlength="200" placeholder="One thing you’d change about the internet" required>
+        <p class="msg" aria-live="polite"></p>
+        <div class="row"><button type="submit" class="next">OK <span class="arrow" aria-hidden="true">→</span></button><span class="hint">or press Enter ↵</span></div>
       </div>
-      <p class="error" id="form-error" role="alert"></p>
+
+      <div class="step" role="group" data-step="link">
+        <h2 class="q"><label for="link">Where can we see your work?</label></h2>
+        <input class="answer" id="link" name="link" type="url" inputmode="url" autocomplete="url" placeholder="X, LinkedIn or your site">
+        <p class="msg" aria-live="polite"></p>
+        <div class="row">
+          <button type="submit" class="next"><span class="label">Request an invite</span> <span class="arrow" aria-hidden="true">→</span></button>
+          <button type="button" class="skip">Skip and send</button>
+        </div>
+      </div>
     </form>
+
+    <button type="button" class="back">← Back</button>
   </section>
 
   <section class="done" aria-live="polite">
@@ -283,36 +316,85 @@
 <script>
   const body = document.body;
   const form = document.getElementById('invite-form');
-  const errorEl = document.getElementById('form-error');
+  const steps = [...form.querySelectorAll('.step')];
+  const dots = [...document.querySelectorAll('.progress span')];
+  const roleInput = document.getElementById('role');
+  let current = 0;
+
+  function show(i, goingBack) {
+    steps.forEach((s, n) => {
+      s.classList.toggle('active', n === i);
+      s.classList.toggle('back-in', n === i && !!goingBack);
+    });
+    dots.forEach((d, n) => d.classList.toggle('on', n <= i));
+    current = i;
+
+    if (steps[i].dataset.step === 'email') {
+      const first = (document.getElementById('name').value.trim().split(/\s+/)[0] || '');
+      document.getElementById('email-q').textContent = first ? `Nice to meet you, ${first}. Where can we find you?` : 'Where can we find you?';
+    }
+    const target = steps[i].querySelector('.answer') || steps[i].querySelector('.choice[aria-checked="true"]') || steps[i].querySelector('.choice');
+    if (target) target.focus({ preventScroll: true });
+  }
+
+  function say(step, text) {
+    step.querySelector('.msg').textContent = text;
+    if (text) { step.classList.remove('shake'); void step.offsetWidth; step.classList.add('shake'); }
+  }
+
+  function valid(step) {
+    const kind = step.dataset.step;
+    if (kind === 'role') {
+      if (!roleInput.value) { say(step, 'Pick one.'); return false; }
+      return true;
+    }
+    const input = step.querySelector('.answer');
+    input.value = input.value.trim();
+    if (kind === 'link' && input.value && !/^https?:\/\//i.test(input.value)) input.value = 'https://' + input.value;
+    if (!input.checkValidity()) {
+      say(step, kind === 'email' ? 'That email doesn’t look right.' : kind === 'link' ? 'That link doesn’t look right.' : 'This one’s needed.');
+      return false;
+    }
+    say(step, '');
+    return true;
+  }
 
   function openInvite(e) {
     if (e) e.preventDefault();
     body.classList.add('open');
-    document.getElementById('name').focus({ preventScroll: true });
     history.replaceState(null, '', '#invite');
+    show(0);
   }
   function closeInvite() {
     if (!body.classList.contains('open') || body.classList.contains('sent')) return;
     body.classList.remove('open');
     history.replaceState(null, '', location.pathname);
+    document.querySelector('.follow').focus({ preventScroll: true });
   }
 
   document.querySelector('.follow').addEventListener('click', openInvite);
   document.querySelector('.rabbit').addEventListener('click', closeInvite);
-  document.querySelector('.back').addEventListener('click', closeInvite);
+  document.querySelector('.back').addEventListener('click', () => current > 0 ? show(current - 1, true) : closeInvite());
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeInvite(); });
-  if (location.hash === '#invite') openInvite();
 
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    errorEl.textContent = '';
-    if (!form.checkValidity()) {
-      const first = form.querySelector(':invalid');
-      errorEl.textContent = first && first.type === 'email' ? 'That email doesn’t look right.' : 'Fill in everything except the link.';
-      if (first) first.focus();
-      return;
-    }
-    const button = form.querySelector('button[type="submit"]');
+  document.querySelectorAll('.choice').forEach((btn, n, all) => {
+    btn.addEventListener('click', () => {
+      all.forEach(b => b.setAttribute('aria-checked', b === btn ? 'true' : 'false'));
+      roleInput.value = btn.dataset.value;
+      say(steps[current], '');
+      setTimeout(() => show(current + 1), 280);
+    });
+    btn.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        all[(n + (e.key === 'ArrowDown' ? 1 : all.length - 1)) % all.length].focus();
+      }
+    });
+  });
+
+  async function send() {
+    const step = steps[current];
+    const button = step.querySelector('.next');
     const label = button.querySelector('.label');
     button.disabled = true;
     label.textContent = 'Sending';
@@ -320,7 +402,7 @@
     try {
       if (data.get('access_key') === 'YOUR_WEB3FORMS_KEY') {
         // Preview mode: no key yet, so nothing is sent.
-        await new Promise(r => setTimeout(r, 600));
+        await new Promise(r => setTimeout(r, 700));
       } else {
         const res = await fetch('https://api.web3forms.com/submit', { method: 'POST', body: data });
         const json = await res.json();
@@ -328,12 +410,26 @@
       }
       body.classList.remove('open');
       body.classList.add('sent');
-      } catch (err) {
-      errorEl.textContent = 'Something went wrong. Try again in a minute.';
+    } catch (err) {
+      say(step, 'Something went wrong. Try again in a minute.');
       button.disabled = false;
       label.textContent = 'Request an invite';
     }
+  }
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const step = steps[current];
+    if (!valid(step)) return;
+    if (current < steps.length - 1) show(current + 1);
+    else send();
   });
+  document.querySelector('.skip').addEventListener('click', () => {
+    document.getElementById('link').value = '';
+    send();
+  });
+
+  if (location.hash === '#invite') openInvite();
 </script>
 </body>
 </html>

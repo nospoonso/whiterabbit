@@ -11,41 +11,57 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23FF080C'/%3E%3Cg fill='%23fff'%3E%3Crect x='30' y='14' width='16' height='16'/%3E%3Crect x='56' y='14' width='16' height='16'/%3E%3Crect x='34' y='38' width='15' height='15'/%3E%3Crect x='53' y='38' width='15' height='15'/%3E%3Ccircle cx='51' cy='73' r='16'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet">
 <style>
   /* Lettera Text (Lineto) loads only from fonts installed on the viewer's own computer.
      No font file is hosted here. Once you have a Lineto web licence, add the licensed
      .woff2 files to src below. Everyone else sees Inter. */
   @font-face { font-family: 'Lettera Text'; font-weight: 500; src: local('Lettera Text Medium'), local('LetteraText-Medium'), local('Lettera Text Trial Medium'), local('LetteraTextTrial-Medium'); }
   @font-face { font-family: 'Lettera Text'; font-weight: 400; src: local('Lettera Text Regular'), local('LetteraText-Regular'), local('Lettera Text Trial Regular'), local('LetteraTextTrial-Regular'); }
-  :root { --red: #FF080C; --white: #FFFFFF; }
+
+  /* Two colours only.
+     --red   : the White Rabbit red, for backgrounds, the rabbit and big headlines.
+     --ink   : the same red, one step deeper, for small text, lines and buttons on white
+               (keeps small text readable: 5:1 on white). */
+  :root { --red: #FF080C; --ink: #E00509; --white: #FFFFFF; --ease: cubic-bezier(.2,.7,.2,1); }
   * { box-sizing: border-box; }
-  html, body { margin: 0; height: 100%; }
+  html, body { margin: 0; }
   body {
+    min-height: 100vh;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
     background: var(--red);
     color: var(--white);
     font-family: 'Lettera Text', 'Inter', system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
   }
   main {
-    min-height: 100vh;
-    min-height: 100svh;
+    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 40px;
-    padding: 96px 16px 120px;
+    padding: 96px 16px 32px;
     text-align: center;
   }
+
+  /* ---------- Landing (red) ---------- */
   .rabbit {
     width: clamp(88px, 14vw, 140px);
-    height: auto;
     display: block;
-    animation: arrive 900ms cubic-bezier(.2,.7,.2,1) both;
+    background: none;
+    border: 0;
+    padding: 0;
+    color: inherit;
+    cursor: default;
+    transition: width 500ms var(--ease), color 500ms var(--ease);
+    animation: arrive 900ms var(--ease) both;
   }
+  .rabbit svg { width: 100%; height: auto; display: block; }
   .follow {
-    color: var(--white);
+    color: inherit;
     text-decoration: none;
     font-weight: 500;
     font-size: clamp(32px, 6vw, 64px);
@@ -54,60 +70,205 @@
     padding: 8px 4px;
     border-bottom: 3px solid transparent;
     transition: border-color 200ms ease;
-    animation: arrive 900ms 200ms cubic-bezier(.2,.7,.2,1) both;
+    animation: arrive 900ms 200ms var(--ease) both;
   }
-  .follow:hover, .follow:focus-visible { border-bottom-color: var(--white); outline: none; }
-  .follow:hover ~ .hint, .follow:focus-visible ~ .hint { opacity: 1; }
-  .hint {
-    margin: -20px 0 0;
-    font-size: 20px;
+  .follow:hover, .follow:focus-visible { border-bottom-color: currentColor; outline: none; }
+
+  /* ---------- Invite (stays red: white fields, white buttons, red ink inside) ---------- */
+  body.open .follow { display: none; }
+  body.open main { justify-content: flex-start; gap: 36px; padding-top: 64px; }
+  body.open .rabbit { width: 56px; cursor: pointer; }
+  .invite, .done { display: none; width: 100%; max-width: 560px; text-align: left; }
+  body.open .invite { display: block; animation: arrive 600ms 120ms var(--ease) both; }
+
+  .invite h1 {
+    margin: 0 0 12px;
     font-weight: 500;
-    opacity: 0;
-    transition: opacity 200ms ease;
+    font-size: clamp(32px, 5vw, 48px);
+    letter-spacing: -0.02em;
+    line-height: 1.05;
   }
-  footer {
-    position: absolute;
-    left: 0; right: 0; bottom: 0;
+  .invite .lede { margin: 0 0 32px; font-size: 22px; font-weight: 500; line-height: 1.35; }
+  form { display: flex; flex-direction: column; gap: 12px; }
+
+  /* Fields: white blocks, red label and text inside */
+  .field {
     display: flex;
-    justify-content: center;
-    gap: 8px;
-    padding: 24px 16px 32px;
+    flex-direction: column;
+    gap: 2px;
+    background: var(--white);
+    padding: 12px 16px 8px;
+    box-shadow: inset 0 -3px 0 transparent;
+    transition: box-shadow 150ms ease;
   }
-  footer a {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 44px; height: 44px;
+  .field:focus-within { box-shadow: inset 0 -3px 0 var(--ink); }
+  .field label {
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+  .field input {
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: var(--ink);
+    font: inherit;
+    font-size: 20px;
+    padding: 4px 0 6px;
+    outline: none;
+  }
+  .field input::placeholder { color: var(--ink); opacity: .5; }
+  .optional { text-transform: none; letter-spacing: 0; opacity: .75; }
+
+  /* Choice: white outlines, the picked one fills white */
+  .roles { border: 0; margin: 12px 0 4px; padding: 0; }
+  .roles legend { padding: 0; margin-bottom: 10px; font-size: 18px; font-weight: 500; }
+  .role-options { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .role-options input { position: absolute; opacity: 0; pointer-events: none; }
+  .role-options label {
+    display: flex; align-items: center; justify-content: center;
+    min-height: 52px; padding: 8px 6px;
+    border: 2px solid var(--white);
     color: var(--white);
+    font-size: 17px; font-weight: 500; text-align: center; white-space: nowrap;
+    cursor: pointer;
+    transition: background 150ms ease, color 150ms ease;
+  }
+  .role-options label:hover { background: rgba(255, 255, 255, .12); }
+  .role-options input:checked + label { background: var(--white); color: var(--ink); }
+  .role-options input:focus-visible + label { outline: 3px solid var(--white); outline-offset: 3px; }
+
+  .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+  .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; margin-top: 20px; }
+  button[type="submit"] {
+    display: inline-flex; align-items: center; gap: 12px;
+    min-height: 56px;
+    padding: 14px 28px;
+    background: var(--white);
+    color: var(--ink);
+    border: 2px solid var(--white);
+    font: inherit;
+    font-size: 19px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 150ms ease, color 150ms ease;
+  }
+  button[type="submit"] .arrow { transition: transform 200ms var(--ease); }
+  button[type="submit"]:hover { background: transparent; color: var(--white); }
+  button[type="submit"]:hover .arrow { transform: translateX(4px); }
+  button[type="submit"]:focus-visible { outline: 3px solid var(--white); outline-offset: 3px; }
+  button[type="submit"]:disabled { opacity: .7; cursor: wait; }
+  .back {
+    background: none; border: 0; padding: 12px 0;
+    font: inherit; font-size: 18px; font-weight: 500; color: var(--white);
+    cursor: pointer; text-decoration: underline; text-underline-offset: 5px;
+  }
+  .error { min-height: 1.4em; margin: 0; font-size: 18px; font-weight: 500; }
+
+  /* ---------- Sent (back to red) ---------- */
+  body.sent .invite, body.sent .follow { display: none; }
+  body.sent main { justify-content: center; }
+  body.sent .rabbit { width: clamp(88px, 14vw, 140px); cursor: default; }
+  body.sent .done { display: block; text-align: center; animation: arrive 600ms 120ms var(--ease) both; }
+  .done h2 { margin: 0 0 12px; font-weight: 500; font-size: clamp(36px, 6vw, 64px); letter-spacing: -0.02em; }
+  .done p { margin: 0; font-size: 20px; font-weight: 500; }
+
+  /* ---------- Footer ---------- */
+  footer { display: flex; justify-content: center; gap: 8px; padding: 24px 16px 32px; }
+  footer a {
+    display: flex; align-items: center; justify-content: center;
+    width: 44px; height: 44px;
+    color: inherit;
     opacity: .85;
     transition: opacity 150ms ease;
   }
   footer a:hover, footer a:focus-visible { opacity: 1; }
   footer svg { width: 22px; height: 22px; display: block; }
+
   @keyframes arrive {
     from { opacity: 0; transform: translateY(12px); }
     to   { opacity: 1; transform: none; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .rabbit, .follow { animation: none; }
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+  @media (max-width: 480px) {
+    .role-options { grid-template-columns: 1fr; }
   }
 </style>
 </head>
 <body>
 <main>
-  <svg class="rabbit" viewBox="94 57 98 175" role="img" aria-label="White Rabbit">
-    <g fill="#FFFFFF">
-      <rect x="96.5" y="59" width="33" height="33"/>
-      <rect x="156.5" y="59" width="33" height="33"/>
-      <rect x="104.5" y="112" width="33" height="33"/>
-      <rect x="148.5" y="112" width="33" height="33"/>
-      <circle cx="142" cy="196" r="34"/>
-    </g>
-  </svg>
+  <button class="rabbit" type="button" aria-label="Back" tabindex="-1">
+    <svg viewBox="94 57 98 175" aria-hidden="true">
+      <g fill="currentColor">
+        <rect x="96.5" y="59" width="33" height="33"/>
+        <rect x="156.5" y="59" width="33" height="33"/>
+        <rect x="104.5" y="112" width="33" height="33"/>
+        <rect x="148.5" y="112" width="33" height="33"/>
+        <circle cx="142" cy="196" r="34"/>
+      </g>
+    </svg>
+  </button>
 
-  <!-- Replace # with your invite form link (Tally, Google Forms, etc.) -->
-  <a class="follow" href="#">Follow the white rabbit.</a>
-  <p class="hint">Invite only.</p>
+  <a class="follow" href="#invite">Follow the white rabbit.</a>
+
+  <section class="invite" id="invite" aria-labelledby="invite-title">
+    <h1 id="invite-title">Come bend the internet with us.</h1>
+    <p class="lede">White Rabbit is invite only. Tell us who you are.</p>
+
+    <form id="invite-form" novalidate>
+      <!-- Paste your Web3Forms access key here (free, from web3forms.com). Submissions go to your email. -->
+      <input type="hidden" name="access_key" value="YOUR_WEB3FORMS_KEY">
+      <input type="hidden" name="subject" value="New White Rabbit invite request">
+      <input type="hidden" name="from_name" value="White Rabbit">
+      <!-- Spam trap: people never see this, bots fill it in -->
+      <div class="hp" aria-hidden="true"><input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off"></div>
+
+      <div class="field">
+        <label for="name">Name</label>
+        <input id="name" name="name" type="text" autocomplete="name" required>
+      </div>
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" autocomplete="email" required>
+      </div>
+
+      <fieldset class="roles">
+        <legend>I’m a</legend>
+        <div class="role-options">
+          <input type="radio" id="r-builder" name="role" value="Builder" required>
+          <label for="r-builder">Builder</label>
+          <input type="radio" id="r-partner" name="role" value="Partner">
+          <label for="r-partner">Partner</label>
+          <input type="radio" id="r-team" name="role" value="Future teammate">
+          <label for="r-team">Future teammate</label>
+        </div>
+      </fieldset>
+
+      <div class="field">
+        <label for="bend">What would you bend?</label>
+        <input id="bend" name="what_would_you_bend" type="text" maxlength="200" required>
+      </div>
+      <div class="field">
+        <label for="link">A link to you <span class="optional">(optional)</span></label>
+        <input id="link" name="link" type="url" placeholder="X, LinkedIn or portfolio" autocomplete="url">
+      </div>
+
+      <div class="actions">
+        <button type="submit"><span class="label">Request an invite</span><span class="arrow" aria-hidden="true">→</span></button>
+        <button type="button" class="back">Back</button>
+      </div>
+      <p class="error" id="form-error" role="alert"></p>
+    </form>
+  </section>
+
+  <section class="done" aria-live="polite">
+    <h2>We’ll find you.</h2>
+    <p>Keep an eye on your inbox.</p>
+  </section>
 </main>
 
 <footer>
@@ -118,5 +279,61 @@
     <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
   </a>
 </footer>
+
+<script>
+  const body = document.body;
+  const form = document.getElementById('invite-form');
+  const errorEl = document.getElementById('form-error');
+
+  function openInvite(e) {
+    if (e) e.preventDefault();
+    body.classList.add('open');
+    document.getElementById('name').focus({ preventScroll: true });
+    history.replaceState(null, '', '#invite');
+  }
+  function closeInvite() {
+    if (!body.classList.contains('open') || body.classList.contains('sent')) return;
+    body.classList.remove('open');
+    history.replaceState(null, '', location.pathname);
+  }
+
+  document.querySelector('.follow').addEventListener('click', openInvite);
+  document.querySelector('.rabbit').addEventListener('click', closeInvite);
+  document.querySelector('.back').addEventListener('click', closeInvite);
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeInvite(); });
+  if (location.hash === '#invite') openInvite();
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    errorEl.textContent = '';
+    if (!form.checkValidity()) {
+      const first = form.querySelector(':invalid');
+      errorEl.textContent = first && first.type === 'email' ? 'That email doesn’t look right.' : 'Fill in everything except the link.';
+      if (first) first.focus();
+      return;
+    }
+    const button = form.querySelector('button[type="submit"]');
+    const label = button.querySelector('.label');
+    button.disabled = true;
+    label.textContent = 'Sending';
+    const data = new FormData(form);
+    try {
+      if (data.get('access_key') === 'YOUR_WEB3FORMS_KEY') {
+        // Preview mode: no key yet, so nothing is sent.
+        await new Promise(r => setTimeout(r, 600));
+      } else {
+        const res = await fetch('https://api.web3forms.com/submit', { method: 'POST', body: data });
+        const json = await res.json();
+        if (!json.success) throw new Error(json.message || 'failed');
+      }
+      body.classList.remove('open');
+      body.classList.add('sent');
+      } catch (err) {
+      errorEl.textContent = 'Something went wrong. Try again in a minute.';
+      button.disabled = false;
+      label.textContent = 'Request an invite';
+    }
+  });
+</script>
 </body>
 </html>

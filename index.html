@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>White Rabbit</title>
+<meta name="description" content="Follow the white rabbit. NoSpoon's private community.">
+<meta name="theme-color" content="#FF080C">
+<meta property="og:title" content="White Rabbit">
+<meta property="og:description" content="Follow the white rabbit. NoSpoon's private community.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23FF080C'/%3E%3Cg fill='%23fff'%3E%3Crect x='30' y='14' width='16' height='16'/%3E%3Crect x='56' y='14' width='16' height='16'/%3E%3Crect x='34' y='38' width='15' height='15'/%3E%3Crect x='53' y='38' width='15' height='15'/%3E%3Ccircle cx='51' cy='73' r='16'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500&display=swap" rel="stylesheet">
+<style>
+  /* Lettera Text (Lineto) loads only from fonts installed on the viewer's own computer.
+     No font file is hosted here. Once you have a Lineto web licence, add the licensed
+     .woff2 files to src below. Everyone else sees Inter. */
+  @font-face { font-family: 'Lettera Text'; font-weight: 500; src: local('Lettera Text Medium'), local('LetteraText-Medium'), local('Lettera Text Trial Medium'), local('LetteraTextTrial-Medium'); }
+  @font-face { font-family: 'Lettera Text'; font-weight: 400; src: local('Lettera Text Regular'), local('LetteraText-Regular'), local('Lettera Text Trial Regular'), local('LetteraTextTrial-Regular'); }
+  :root { --red: #FF080C; --white: #FFFFFF; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    background: var(--red);
+    color: var(--white);
+    font-family: 'Lettera Text', 'Inter', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  main {
+    min-height: 100vh;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    padding: 96px 16px 120px;
+    text-align: center;
+  }
+  .rabbit {
+    width: clamp(88px, 14vw, 140px);
+    height: auto;
+    display: block;
+    animation: arrive 900ms cubic-bezier(.2,.7,.2,1) both;
+  }
+  .follow {
+    color: var(--white);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: clamp(32px, 6vw, 64px);
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    padding: 8px 4px;
+    border-bottom: 3px solid transparent;
+    transition: border-color 200ms ease;
+    animation: arrive 900ms 200ms cubic-bezier(.2,.7,.2,1) both;
+  }
+  .follow:hover, .follow:focus-visible { border-bottom-color: var(--white); outline: none; }
+  .follow:hover ~ .hint, .follow:focus-visible ~ .hint { opacity: 1; }
+  .hint {
+    margin: -20px 0 0;
+    font-size: 20px;
+    font-weight: 500;
+    opacity: 0;
+    transition: opacity 200ms ease;
+  }
+  footer {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    padding: 24px 16px 32px;
+  }
+  footer a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px; height: 44px;
+    color: var(--white);
+    opacity: .85;
+    transition: opacity 150ms ease;
+  }
+  footer a:hover, footer a:focus-visible { opacity: 1; }
+  footer svg { width: 22px; height: 22px; display: block; }
+  @keyframes arrive {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .rabbit, .follow { animation: none; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <svg class="rabbit" viewBox="94 57 98 175" role="img" aria-label="White Rabbit">
+    <g fill="#FFFFFF">
+      <rect x="96.5" y="59" width="33" height="33"/>
+      <rect x="156.5" y="59" width="33" height="33"/>
+      <rect x="104.5" y="112" width="33" height="33"/>
+      <rect x="148.5" y="112" width="33" height="33"/>
+      <circle cx="142" cy="196" r="34"/>
+    </g>
+  </svg>
+
+  <!-- Replace # with your invite form link (Tally, Google Forms, etc.) -->
+  <a class="follow" href="#">Follow the white rabbit.</a>
+  <p class="hint">Invite only.</p>
+</main>
+
+<footer>
+  <a href="https://nospoon.so" aria-label="NoSpoon">
+    <svg viewBox="0 0 284 284" aria-hidden="true"><g fill="currentColor"><circle cx="142" cy="142" r="31"/><rect x="0" y="125.5" width="33" height="33"/><rect x="53" y="125.5" width="33" height="33"/><rect x="198" y="125.5" width="33" height="33"/><rect x="251" y="125.5" width="33" height="33"/><rect x="125.5" y="0" width="33" height="33"/><rect x="125.5" y="53" width="33" height="33"/><rect x="125.5" y="198" width="33" height="33"/><rect x="125.5" y="251" width="33" height="33"/></g></svg>
+  </a>
+  <a href="https://x.com/nospoonwr" aria-label="White Rabbit on X">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+  </a>
+</footer>
+</body>
+</html>
